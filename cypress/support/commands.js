@@ -2,7 +2,20 @@
 // Biblioteca faker para geração de massa de testes
 import { faker } from '@faker-js/faker';
 
-// Comando personalizado para gerar dados de cliente
+/* Variáveis */
+
+const ferramentasDisponiveis = [
+  'Robot Framework',
+  'Selenium WebDriver',
+  'Cypress',
+  'Appium',
+  'Protractor'
+];
+
+const ferramentasSelecionadas = ferramentasDisponiveis.sort(() => 0.5 - Math.random()).slice(0, 2);
+
+
+// Função para gerar dados completos de cliente
 Cypress.Commands.add('bodyNewClient', () => {
   return {
     nome: faker.person.firstName(),
@@ -14,8 +27,7 @@ Cypress.Commands.add('bodyNewClient', () => {
     complemento: faker.lorem.text(5),
     pais: faker.location.country(),
     genero: faker.person.gender(),
-    ferramentas: [faker.person.jobArea()]
+    ferramentas: [ferramentasSelecionadas]
   };
 });
-
 
