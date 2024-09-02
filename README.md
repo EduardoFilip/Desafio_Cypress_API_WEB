@@ -20,7 +20,10 @@ Para executar os testes utilize o seguinte comando:
 - **npx cypress run**
 
 ## Report dos testes
-Para visualizar o report dos testes executados, navegue até a pasta **"./reports/html"** do projeto.
+Para visualizar o report dos testes executados navegue até a pasta **"./reports/html"** do projeto.
+
+Exemplo do report:
+![image](https://github.com/user-attachments/assets/e6ffa069-90e4-450b-aced-d476c41bd981)
 
 ## Issues
 Alguns testes estão com descritivo de "Issue #123". Essas Issues estão abertas no repositório para análise.
