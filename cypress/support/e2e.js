@@ -1,6 +1,6 @@
 afterEach(() => {
     // Captura uma screenshot ao final de cada teste
-    cy.screenshot();
+    cy.screenshot({ capture: 'viewport' })
   });
 
 

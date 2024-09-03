@@ -14,7 +14,7 @@ it('CT001— Teste de atualização bem-sucedida', () => {
 
     cy.api({
       method: 'POST',
-      url: endpointAddClient,
+      url: Cypress.env('baseUrlApi') + endpointAddClient,
       body: novoCadastro,
     }).then((response) => {
       const idCadastro = response.body.id;
@@ -26,7 +26,7 @@ it('CT001— Teste de atualização bem-sucedida', () => {
 
       cy.api({
         method: 'PUT',
-        url: `${endpointupdateClient}/${idCadastro}`,  
+        url: Cypress.env('baseUrlApi') + endpointupdateClient + '/' + idCadastro,  
         body: novoCadastro, 
       }).then((response) => {
   
@@ -49,7 +49,7 @@ it('CT002 — Teste de cliente não encontrado - Issue #5', () => {
 
     cy.api({
       method: 'POST',
-      url: endpointAddClient,
+      url: Cypress.env('baseUrlApi') + endpointAddClient,
       body: novoCadastro,
     }).then((response) => {
 
@@ -60,7 +60,7 @@ it('CT002 — Teste de cliente não encontrado - Issue #5', () => {
 
       cy.api({
         method: 'PUT',
-        url: `${endpointupdateClient}/`,  
+        url: Cypress.env('baseUrlApi') + endpointupdateClient + '/',  
         body: novoCadastro, 
         failOnStatusCode: false
       }).then((response) => {
@@ -84,7 +84,7 @@ it('CT003 — Teste de atualização sem campos', () => {
 
     cy.api({
       method: 'POST',
-      url: endpointAddClient,
+      url: Cypress.env('baseUrlApi') + endpointAddClient,
       body: novoCadastro,
     }).then((response) => {
       const idCadastro = response.body.id;
@@ -96,7 +96,7 @@ it('CT003 — Teste de atualização sem campos', () => {
 
       cy.api({
         method: 'PUT',
-        url: `${endpointupdateClient}/${idCadastro}`,  
+        url: Cypress.env('baseUrlApi') + endpointupdateClient + '/' + idCadastro,  
         failOnStatusCode: false
       }).then((response) => {
   

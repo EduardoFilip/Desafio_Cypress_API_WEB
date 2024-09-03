@@ -14,7 +14,7 @@ it('CT001— Teste de adição bem-sucedida', () => {
     // QUANDO realizar uma requisição do tipo POST
     cy.api({
       method: 'POST',
-      url: endpointAddClient,
+      url: Cypress.env('baseUrlApi') + endpointAddClient,
       body: novoCadastro,
     }).then((response) => {
 
@@ -41,7 +41,7 @@ it('CT002 — Teste de campos obrigatórios', () => {
       // QUANDO realizar uma requisição do tipo POST
       cy.api({
         method: 'POST',
-        url: endpointAddClient,
+        url: Cypress.env('baseUrlApi') + endpointAddClient,
         body: novoCadastro,
         failOnStatusCode: false
       }).then((response) => {
@@ -69,7 +69,7 @@ it('CT003 — Teste de validação do e-mail', () => {
   // QUANDO realizar uma requisição do tipo POST
   cy.api({
     method: 'POST',
-    url: endpointAddClient,
+    url: Cypress.env('baseUrlApi') + endpointAddClient,
     body: novoCadastro,
     failOnStatusCode: false
   }).then((response) => {
@@ -95,7 +95,7 @@ it('CT004 — Teste de validação de URL do perfil', () => {
   // QUANDO realizar uma requisição do tipo POST
   cy.api({
     method: 'POST',
-    url: endpointAddClient,
+    url: Cypress.env('baseUrlApi') + endpointAddClient,
     body: novoCadastro,
     failOnStatusCode: false
   }).then((response) => {
@@ -121,7 +121,7 @@ it('CT005 — Teste de adição com ferramentas vazias - Issue #2', () => {
   // QUANDO realizar uma requisição do tipo POST
   cy.api({
     method: 'POST',
-    url: endpointAddClient,
+    url: Cypress.env('baseUrlApi') + endpointAddClient,
     body: novoCadastro,
     failOnStatusCode: false
   }).then((response) => {

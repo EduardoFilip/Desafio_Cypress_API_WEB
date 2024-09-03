@@ -15,8 +15,18 @@ module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       require('cypress-mochawesome-reporter/plugin')(on);
-    },
-    baseUrl: 'https://api-challenge.primecontrol.com.br', // Base URL para requisições
 
+      // Base URL de API e WEB
+      config.env.baseUrlApi = 'https://api-challenge.primecontrol.com.br';
+      config.env.baseUrlWeb = 'https://challenge.primecontrol.com.br';
+      
+      return config;
+    },
+    
+    browser: 'chrome',
   },
 });
+
+
+
+  

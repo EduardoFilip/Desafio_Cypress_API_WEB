@@ -13,7 +13,7 @@ it('CT001— Teste de resposta bem-sucedida', () => {
   // QUANDO realizar uma requisição do tipo GET
   cy.api({
     method: 'GET',
-    url: endpointlistClients,
+    url: Cypress.env('baseUrlApi') + endpointlistClients,
   }).then((response) => {
 
     // ENTÃO a API deve retornar 200
@@ -41,7 +41,7 @@ it('CT002 — Teste de validação dos campos - Issue #3', () => {
   // QUANDO realizar uma requisição do tipo GET
   cy.api({
     method: 'GET',
-    url: endpointlistClients,
+    url: Cypress.env('baseUrlApi') + endpointlistClients,
   }).then((response) => {
 
     // ENTÃO a API deve retornar 200
@@ -67,7 +67,7 @@ it('CT003 — Teste de validação de endpoint', () => {
   // QUANDO realizar uma requisição do tipo GET
   cy.api({
     method: 'GET',
-    url: '/listClientes',
+    url: Cypress.env('baseUrlApi') + '/listClientes',
     failOnStatusCode: false
   }).then((response) => {
 

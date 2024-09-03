@@ -13,7 +13,7 @@ it('CT001— Teste de exclusão bem-sucedida', () => {
 
     cy.api({
       method: 'POST',
-      url: endpointAddClient,
+      url: Cypress.env('baseUrlApi') + endpointAddClient,
       body: novoCadastro,
     }).then((response) => {
       const idCadastro = response.body.id;
@@ -21,7 +21,7 @@ it('CT001— Teste de exclusão bem-sucedida', () => {
   // QUANDO realizar uma requisição do tipo DELETE informando o ID do cadastro no endpoint
       cy.api({
         method: 'DELETE',
-        url: `${endpointDeleteClient}/${idCadastro}`,
+        url: Cypress.env('baseUrlApi') + endpointDeleteClient + '/' + idCadastro,
       }).then((response) => {
   
   // Então o sitema deve retornar 200
@@ -43,7 +43,7 @@ it('CT002 — Teste de cliente não encontrado', () => {
   // QUANDO realizar uma requisição do tipo DELETE informando o ID do cadastro no endpoint
     cy.api({
       method: 'DELETE',
-      url: `${endpointDeleteClient}/1111`,
+      url: Cypress.env('baseUrlApi') + endpointDeleteClient + '/' + '1111',
       failOnStatusCode: false
     }).then((response) => {
   
@@ -62,7 +62,7 @@ it('CT003 — Teste de exclusão sem ID - Issue #4', () => {
   // QUANDO realizar uma requisição do tipo DELETE sem informar o ID do cadastro no endpoint
     cy.api({
       method: 'DELETE',
-      url: `${endpointDeleteClient}/`,
+      url: Cypress.env('baseUrlApi') + endpointDeleteClient + '/',
       failOnStatusCode: false
     }).then((response) => {
   
