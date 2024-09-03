@@ -144,6 +144,7 @@ describe('Testes WEB - Suíte de testes WEB', () => {
     // Quando pesquisar o cliente pelo nome
     cy.get('.form-control.inputSearch').type(nomeCompleto)
     cy.get('#button-addon2').click()
+    cy.wait(1000)
 
     // Então o sistema irá exibir um modal com a foto do cliente
     cy.get('.modal-content-cliente').should('be.visible')
@@ -164,154 +165,240 @@ describe('Testes WEB - Suíte de testes WEB', () => {
     });
 
 
-    it('CT007 — Editar Cliente recém cadastrado através do botão na listagem de Clientes', () => {
+  it('CT007 — Editar Cliente recém cadastrado através do botão na listagem de Clientes', () => {
 
-      const email = faker.lorem.words(3)
-      const senha = faker.lorem.word(9)
-      const nomeCompleto = faker.person.fullName()
-      const fone = faker.number.int()
-      const cep = faker.location.zipCode("#####-###")
-      const numResidencia = faker.number.int(1000)
-      const endereco = faker.location.streetAddress()
-      const complemento = faker.lorem.word(5)
+    const email = faker.lorem.words(3)
+    const senha = faker.lorem.word(9)
+    const nomeCompleto = faker.person.fullName()
+    const fone = faker.number.int()
+    const cep = faker.location.zipCode("#####-###")
+    const numResidencia = faker.number.int(1000)
+    const endereco = faker.location.streetAddress()
+    const complemento = faker.lorem.word(5)
+  
+    cy.newClientWeb(email, senha)
+
+    cy.get('#floatingPassword').type(senha)
+    cy.get('button').contains('Acessar').click()
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+
+    // Dado que o usuário cadastrou um cliente com sucesso
+    cy.newClientFormWeb(nomeCompleto, fone, email, cep, numResidencia, endereco, complemento)
+    cy.wait(3000)
+
+    let emailReplace = email
+    emailReplace = emailReplace.replace(/\s+/g, '')
+
+    // Quando atualizar o cadastro
+    cy.get('tbody').contains('td', emailReplace + '@email.com').parent('tr').find('.fas.fa-edit.icone-acao').click()
+    cy.get(`input[value="${nomeCompleto}"]`).type(' testeEdicaoNome')
+
+    // E salvar
+    cy.get('.btn').contains('Salvar').click()
     
-      cy.newClientWeb(email, senha)
-  
-      cy.get('#floatingPassword').type(senha)
-      cy.get('button').contains('Acessar').click()
-      cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
-      cy.get('h1').contains('Gestão de Clientes').should('be.visible')
-  
-      // Dado que o usuário cadastrou um cliente com sucesso
-      cy.newClientFormWeb(nomeCompleto, fone, email, cep, numResidencia, endereco, complemento)
-      cy.wait(3000)
-  
-      let emailReplace = email
-      emailReplace = emailReplace.replace(/\s+/g, '')
+    // Então o sistema deve aplicar a alteração
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.get('tbody').contains('td', nomeCompleto + ' testeEdicaoNome')
 
-      // Quando atualizar o cadastro
-      cy.get('tbody').contains('td', emailReplace + '@email.com').parent('tr').find('.fas.fa-edit.icone-acao').click()
-      cy.get(`input[value="${nomeCompleto}"]`).type(' testeEdicaoNome')
+    });
 
-      // E salvar
-      cy.get('.btn').contains('Salvar').click()
-      
-      // Então o sistema deve aplicar a alteração
-      cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
-      cy.get('tbody').contains('td', nomeCompleto + ' testeEdicaoNome')
+  it('CT008 — Excluir Cliente recém cadastrado através do botão “Excluir” na listagem de Clientes', () => {
 
-      });
+    const email = faker.lorem.words(3)
+    const senha = faker.lorem.word(9)
+    const nomeCompleto = faker.person.fullName()
+    const fone = faker.number.int()
+    const cep = faker.location.zipCode("#####-###")
+    const numResidencia = faker.number.int(1000)
+    const endereco = faker.location.streetAddress()
+    const complemento = faker.lorem.word(5)
   
-    it('CT008 — Excluir Cliente recém cadastrado através do botão “Excluir” na listagem de Clientes', () => {
+    cy.newClientWeb(email, senha)
 
-      const email = faker.lorem.words(3)
-      const senha = faker.lorem.word(9)
-      const nomeCompleto = faker.person.fullName()
-      const fone = faker.number.int()
-      const cep = faker.location.zipCode("#####-###")
-      const numResidencia = faker.number.int(1000)
-      const endereco = faker.location.streetAddress()
-      const complemento = faker.lorem.word(5)
+    cy.get('#floatingPassword').type(senha)
+    cy.get('button').contains('Acessar').click()
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+
+    // Dado que o usuário cadastrou um cliente com sucesso
+    cy.newClientFormWeb(nomeCompleto, fone, email, cep, numResidencia, endereco, complemento)
+    cy.wait(3000)
+
+    let emailReplace = email
+    emailReplace = emailReplace.replace(/\s+/g, '')
+
+    // Quando excluir o cadastro deste cliente através da listagem de clientes
+    cy.get('tbody').contains('td', emailReplace + '@email.com').parent('tr').find('i.far.fa-trash-alt.icone-acao.red').click()
+    cy.get('.sweet-alert').should('be.visible')
+    cy.get('.btn.btn-lg.btn-danger').click()
+    cy.wait(2000)
+
+    // Então o sistema deve aplicar a exclusão
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.wait(1000)
+    cy.get('.form-control.inputSearch').type(nomeCompleto)
+    cy.get('#button-addon2').click()
+    cy.get('.alert').should('be.visible').and('have.text', 'Cliente não encontrado.')
     
-      cy.newClientWeb(email, senha)
+    });
+
+  it('CT009— Validar Cadastro de Clientes com Email inválido na aba Perfil', () => {
+
+    const email = faker.lorem.words(3)
+    const senha = faker.lorem.word(9)
+    const nomeCompleto = faker.person.fullName()
+    const fone = faker.number.int()
+    const cep = faker.location.zipCode("#####-###")
+    const numResidencia = faker.number.int(1000)
+    const endereco = faker.location.streetAddress()
+    const complemento = faker.lorem.word(5)
   
-      cy.get('#floatingPassword').type(senha)
-      cy.get('button').contains('Acessar').click()
-      cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
-      cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+    cy.newClientWeb(email, senha)
+
+    cy.get('#floatingPassword').type(senha)
+    cy.get('button').contains('Acessar').click()
+    // Dado que o usuário está logado
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+
+    // Quando acessar a tab Cadastrar Cliente
+    // E preecher os dados completos mas com email incorreto
+    cy.newClientFormWeb(nomeCompleto, fone, "", cep, numResidencia, endereco, complemento)
+
+    // E clicar em salvar
+    cy.get('button').contains('Salvar').click()
+
+    // Então o sistema deve focar no campo email e exibir uma mensagem de erro "Insira uma parte seguida por "@". "@email.com" está incompleto."
+    cy.get(':nth-child(2) > .row > :nth-child(2) > .form-control').should('be.focused')
+
+  });
+
+  it('CT010 — Validar preenchimento de campos obrigatórios na aba Perfil', () => {
+
+    const email = faker.lorem.words(3)
+    const senha = faker.lorem.word(9)
+    const nomeCompleto = faker.person.fullName()
+    const fone = faker.number.int()
+    const cep = faker.location.zipCode("#####-###")
+    const numResidencia = faker.number.int(1000)
+    const endereco = faker.location.streetAddress()
+    const complemento = faker.lorem.word(5)
   
-      // Dado que o usuário cadastrou um cliente com sucesso
-      cy.newClientFormWeb(nomeCompleto, fone, email, cep, numResidencia, endereco, complemento)
-      cy.wait(3000)
-  
-      let emailReplace = email
-      emailReplace = emailReplace.replace(/\s+/g, '')
+    cy.newClientWeb(email, senha)
 
-      // Quando excluir o cadastro deste cliente através da listagem de clientes
-      cy.get('tbody').contains('td', emailReplace + '@email.com').parent('tr').find('i.far.fa-trash-alt.icone-acao.red').click()
-      cy.get('.sweet-alert').should('be.visible')
-      cy.get('.btn.btn-lg.btn-danger').click()
-      cy.wait(2000)
+    cy.get('#floatingPassword').type(senha)
+    cy.get('button').contains('Acessar').click()
 
-      // Então o sistema deve aplicar a exclusão
-      cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
-      cy.wait(1000)
-      cy.get('.form-control.inputSearch').type(nomeCompleto)
-      cy.get('#button-addon2').click()
-      cy.get('.alert').should('be.visible').and('have.text', 'Cliente não encontrado.')
+    // Dado que o usuário está logado
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.get('h1').contains('Gestão de Clientes').should('be.visible')
 
-
-      });
-
-    it('CT009— Validar Cadastro de Clientes com Email inválido na aba Perfil', () => {
-
-      const email = faker.lorem.words(3)
-      const senha = faker.lorem.word(9)
-      const nomeCompleto = faker.person.fullName()
-      const fone = faker.number.int()
-      const cep = faker.location.zipCode("#####-###")
-      const numResidencia = faker.number.int(1000)
-      const endereco = faker.location.streetAddress()
-      const complemento = faker.lorem.word(5)
+    // Quando acessar a tab Cadastrar Cliente
+    // E não preencher os campos de cadastro
+    cy.get('a.nav-link').contains('Cadastrar Cliente').click()
     
-      cy.newClientWeb(email, senha)
-  
-      cy.get('#floatingPassword').type(senha)
-      cy.get('button').contains('Acessar').click()
-      // Dado que o usuário está logado
-      cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
-      cy.get('h1').contains('Gestão de Clientes').should('be.visible')
-      // Quando acessar a tab Cadastrar Cliente
-      // E preecher os dados completos mas com email incorreto
-      // E salvar
-      // Então o sistema deverá apresentar a mesagem 'Insira uma parte antes de "@". "@email.com" está incompleto.
-      cy.newClientFormWeb(nomeCompleto, fone, "", cep, numResidencia, endereco, complemento)
-      cy.get(':nth-child(2) > .row > :nth-child(2) > .form-control').parent()
-      .should('contain', 'Insira uma parte antes de "@". "@email.com" está incompleto.')
+    // Então o botão de salvar deve estar desabilitado
+    cy.get('button').contains('Salvar').should('be.disabled')
 
 
-      });
-
-      it('CT010 — Validar preenchimento de campos obrigatórios na aba Perfil', () => {
-
-        const email = faker.lorem.words(3)
-        const senha = faker.lorem.word(9)
-        const nomeCompleto = faker.person.fullName()
-        const fone = faker.number.int()
-        const cep = faker.location.zipCode("#####-###")
-        const numResidencia = faker.number.int(1000)
-        const endereco = faker.location.streetAddress()
-        const complemento = faker.lorem.word(5)
-      
-        cy.newClientWeb(email, senha)
+    });
     
-        cy.get('#floatingPassword').type(senha)
-        cy.get('button').contains('Acessar').click()
 
-        // Dado que o usuário está logado
-        cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
-        cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+  /* CT011- WIP
+  it('CT011— Validar download XML na aba Fiscal e preenchimento dos campos através do XML', () => {
 
-        // Quando acessar a tab Cadastrar Cliente
-        // E não preencher os campos de cadastro
-        cy.get('a.nav-link').contains('Cadastrar Cliente').click()
-        
-        // Então o botão de salvar deve estar desabilitado
-        cy.get('button').contains('Salvar').should('be.disabled')
+    // Dado que o usuário criou uma nova conta com sucesso
+    const email = faker.lorem.words(3)
+    const senha = faker.lorem.word(9)
+
+    
+    const cnpjDeclarante = faker.number.int()
+    const tipoDeclarado = faker.number.int(1000)
+    const niDeclarado = faker.number.int(1000)
+    const paisEmissaoNIF = 'Brasil'
+    const nomeDeclarado = faker.lorem.words(2)
+    const nomePJ = faker.lorem.words(3)
+    const endereco = faker.location.streetAddress()
+    const paisBr = 'Brasil'
+    const titulo = faker.lorem.words(3)
+    const primeiroNome = faker.person.firstName()
+    const nomeMeio = faker.person.firstName()
+    const prefixo = faker.lorem.words(1)
+    const ultimoNome = faker.person.lastName()
   
+    cy.newClientWeb(email, senha)
+
+    // Quando efetuar o login informando o mesmo email e senha de cadastro
+    cy.get('#floatingPassword').type(senha)
+    cy.get('button').contains('Acessar').click()
+
+    // Então o sistema deve efetuar o login com sucesso
+    // E redirecioná-lo para a página 'app/home'
+    cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+    cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+
+    cy.get('a.nav-link').contains('Fiscal').click()
+
+    cy.get('#cnpjDeclarante').type(cnpjDeclarante)
+    cy.get('#tipoDeclarado').type(tipoDeclarado)
+    cy.get('#niDeclarado').type(niDeclarado)
+    cy.get('#paisEmissaoNIF').type(paisEmissaoNIF)
+    cy.get('#nomeDeclarado').type(nomeDeclarado)
+    cy.get('#nomePJ').type(nomePJ)
+    cy.get('#endereco').type(endereco)
+    cy.get('#pais').type(paisBr)
+    cy.get('#titulo').type(titulo)
+    cy.get('#primeiroNome').type(primeiroNome)
+    cy.get('#nomeMeio').type(nomeMeio)
+    cy.get('#prefixo').type(prefixo)
+    cy.get('#ultimoNome').type(ultimoNome)
   
-        });
+    });
+*/
+
+
+  /* CT012 - WIP
+  
+  CT012 — Validar importar arquivo XLS e exibição dos dados na aba Gerenciador de Arquivos */
+
+  /* CT013 - WIP
+  
+  CT013 — Validar preenchimento “Informações do Candidato” ao clicar em “Finalizar e Enviar” */
+
+  /* CT014 - wip
+  CT014— Recuperar senha de acesso
+
+*/
+
+it('CT015 — Realizar Logout com sucesso ao clicar em “Finalizar”', () => {
+
+  const email = faker.lorem.words(3)
+  const senha = faker.lorem.word(9)
+
+  cy.newClientWeb(email, senha)
+
+  cy.get('#floatingPassword').type(senha)
+  cy.get('button').contains('Acessar').click()
+
+  // Dado que o usuário está logado
+  cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app/home`)
+  cy.get('h1').contains('Gestão de Clientes').should('be.visible')
+
+  // Quando clicar realizar o logout com sucesso
+  cy.get('.navbar-finalizar > .nav-link').contains('Finalizar').click({force: true})
+  cy.get('.modal-finalizar').should('be.visible')
+  cy.wait(1000)
+  cy.get('button').contains('Logout').click()
+
+  // Então o sistema deve efetuar o logout e redirecioná-lo para a página de login
+  cy.url().should('be.equal', `${Cypress.env('baseUrlWeb')}/app`)
 
 
 
 
 
-
-
-
-
-
-
+  });
 
 
 

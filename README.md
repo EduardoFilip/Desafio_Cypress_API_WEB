@@ -1,7 +1,8 @@
-# Desafio Cypress - API
+# Desafio Cypress - API e WEB
 
-Este projeto foi desenvolvido com o intuito de realizar testes automatizados com Cypress em uma API de cadastros de clientes. 
-A automação contempla os testes de **requisições RESTful** do tipo **POST, GET, PUT e DELETE** e gera um relatório de report detalhado com o plugin **mochawesome reporter**.
+Este projeto foi desenvolvido com o intuito de realizar testes automatizados com Cypress em uma API e WEB de cadastros de clientes. 
+- A automação de API contempla os testes de **requisições RESTful** do tipo **POST, GET, PUT e DELETE** e gera um relatório de report detalhado com o plugin **mochawesome reporter**.
+- A automação WEB contempla recursos de CRUD
 
 ## Pré-requisitos
 
@@ -17,7 +18,10 @@ Execute o seguinte comando para instalar as dependências do projeto:
 ## Execução dos testes
 Para executar os testes utilize o seguinte comando:
 
-- **npx cypress run**
+- **npx cypress run --spec "cypress/e2e/api/*.cy.js"** - Ciclo de testes API
+
+- **npx cypress run --spec "cypress/e2e/web/*.cy.js"** - Ciclo de testes WEB
+
 
 ## Report dos testes
 Para visualizar o report dos testes executados navegue até a pasta **"./reports/html"** do projeto.

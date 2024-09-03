@@ -23,7 +23,6 @@ module.exports = defineConfig({
       return config;
     },
     
-    browser: 'chrome',
   },
 });
 
